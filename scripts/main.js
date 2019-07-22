@@ -130,10 +130,7 @@ client.loginImplicitGrant(clientId, redirectUri)
         console.log(players);
         console.log("DONE");
 
-
-
-
-
+        
         getImage();
 
     })

@@ -18,10 +18,11 @@ canvas {
 #tempCanvas1 {
     z-index: 1;
     margin: auto;
-    top: 15%;
+    top: 10%;
     left: 40%;
     box-align: center;
 }
+
 #buttonContainer {
     position: relative;
     text-align: center;

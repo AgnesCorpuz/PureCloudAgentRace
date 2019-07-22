@@ -1,260 +1,348 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>PureCloud Agent Race</title>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<link rel="stylesheet" href="./styles/styles.css">
-		<script src="https://sdk-cdn.mypurecloud.com/javascript/52.1.1/purecloud-platform-client-v2.min.js"></script>
-		<script src="./scripts/main.js"></script>
-	</head>
 
-	<body id="body">
-		<div id="loaderContainer">
-			<h2 id="h2">Loading...</h2>
-			<div id="loader"></div>
-		</div>
-		<div id="container">
-			<script>
-				var canvasWidth = window.innerWidth;
-				var Agent1, Agent2, Agent3, Agent4;
-				var StartLine, Finish1, Finish2, Finish3, Finish4, Finish5, Finish6, Finish7, Finish8, Finish9, Finish10, Finish11, Finish12;
-		
-				function showPage() {
-					document.getElementById("loader").style.display = "none";
-					document.getElementById("h2").style.display = "none";
-					document.getElementById("div").style.display = "block";
+<head>
+	<title>PureCloud Agent Race</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link rel="stylesheet" href="./styles/styles.css">
+	<script src="https://sdk-cdn.mypurecloud.com/javascript/52.1.1/purecloud-platform-client-v2.min.js"></script>
+	<script src="./scripts/main.js"></script>
+</head>
+
+<body id="body">
+	<div id="loaderContainer">
+		<h2 id="h2">Loading...</h2>
+		<div id="loader"></div>
+	</div>
+	<div id="container">
+		<script>
+			var images;
+			var rotateFlag = false;
+			var canvasWidth = window.innerWidth;
+			var Agent1, Agent2, Agent3, Agent4, Agent;
+			var StartLine, Finish1, Finish2, Finish3, Finish4, Finish5, Finish6, Finish7, Finish8, Finish9, Finish10, Finish11,
+				Finish12;
+
+			function showPage() {
+				document.getElementById("loader").style.display = "none";
+				document.getElementById("h2").style.display = "none";
+				document.getElementById("div").style.display = "block";
+			}
+
+			function getImage() {
+				images = Object.values(players);
+				startGame(images);
+				showPage();
+			}
+
+			function calculateSpeed() {
+
+				speed = Object.values(players);
+				totalSpeed = [];
+
+				for (playerSpeed of speed) {
+
+					total = playerSpeed.stats.acw + playerSpeed.stats.aht + playerSpeed.stats.surveyScore + playerSpeed.stats
+						.qaScore;
+					console.log("total" + total);
+					quotient = total / 100000;
+					console.log("quotient" + quotient);
+					random = Math.random();
+					final = quotient + random;
+					totalSpeed.push(final);
+
 				}
-		
-				function getImage() {
-					images = Object.values(players);
-					startGame(images);
-					showPage();		
+
+				console.log(totalSpeed);
+				moveAgents(totalSpeed);
+
+
+			}
+
+			function startGame(images) {
+				Agent1 = new component(100, 100, images[0].image, 10, 30, "image");
+				Agent2 = new component(100, 100, images[1].image, 10, 180, "image");
+				Agent3 = new component(100, 100, images[2].image, 10, 330, "image");
+				Agent4 = new component(100, 100, images[3].image, 10, 480, "image");
+
+				StartLine = new component(10, 600, "DimGray", 115, 0, "color");
+				Finish1 = new component(25, 100, "Black", (canvasWidth - 50), 0, "color");
+				Finish2 = new component(25, 100, "White", (canvasWidth - 25), 0, "color");
+				Finish3 = new component(25, 100, "White", (canvasWidth - 50), 100, "color");
+				Finish4 = new component(25, 100, "Black", (canvasWidth - 25), 100, "color");
+				Finish5 = new component(25, 100, "Black", (canvasWidth - 50), 200, "color");
+				Finish6 = new component(25, 100, "White", (canvasWidth - 25), 200, "color");
+				Finish7 = new component(25, 100, "White", (canvasWidth - 50), 300, "color");
+				Finish8 = new component(25, 100, "Black", (canvasWidth - 25), 300, "color");
+				Finish9 = new component(25, 100, "Black", (canvasWidth - 50), 400, "color");
+				Finish10 = new component(25, 100, "White", (canvasWidth - 25), 400, "color");
+				Finish11 = new component(25, 100, "White", (canvasWidth - 50), 500, "color");
+				Finish12 = new component(25, 100, "Black", (canvasWidth - 25), 500, "color");
+
+				myGameArea.start();
+			}
+			var myGameArea = {
+				canvas: document.createElement("canvas"),
+				start: function () {
+					this.canvas.width = canvasWidth;
+					this.canvas.height = 600;
+					this.canvas.id = "canvas";
+					this.context = this.canvas.getContext("2d");
+					document.getElementById("container").insertBefore(this.canvas, document.getElementById("container")
+						.childNodes[0]);
+					this.frameNo = 0;
+					this.interval = setInterval(updateGameArea, 20);
+				},
+				clear: function () {
+					this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+				},
+				stop: function () {
+					clearInterval(this.interval);
 				}
-		
-				function startGame(images) {
-					Agent1 = new component(100, 100, images[0].image, 10, 30, "image");
-					Agent2 = new component(100, 100, images[1].image, 10, 180, "image");
-					Agent3 = new component(100, 100, images[2].image, 10, 330, "image");
-					Agent4 = new component(100, 100, images[3].image, 10, 480, "image");
-		
-					StartLine = new component(10, 600, "DimGray", 115, 0, "color");
-					Finish1 = new component(25, 100, "Black", (canvasWidth - 50), 0, "color");
-					Finish2 = new component(25, 100, "White", (canvasWidth - 25), 0, "color");
-					Finish3 = new component(25, 100, "White", (canvasWidth - 50), 100, "color");
-					Finish4 = new component(25, 100, "Black", (canvasWidth - 25), 100, "color");
-					Finish5 = new component(25, 100, "Black", (canvasWidth - 50), 200, "color");
-					Finish6 = new component(25, 100, "White", (canvasWidth - 25), 200, "color");
-					Finish7 = new component(25, 100, "White", (canvasWidth - 50), 300, "color");
-					Finish8 = new component(25, 100, "Black", (canvasWidth - 25), 300, "color");
-					Finish9 = new component(25, 100, "Black", (canvasWidth - 50), 400, "color");
-					Finish10 = new component(25, 100, "White", (canvasWidth - 25), 400, "color");
-					Finish11 = new component(25, 100, "White", (canvasWidth - 50), 500, "color");
-					Finish12 = new component(25, 100, "Black", (canvasWidth - 25), 500, "color");		
-		
-					myGameArea.start();
+			}
+
+			function component(width, height, color, x, y, type) {
+				this.type = type;
+				if (type == "image") {
+					this.image = new Image();
+					this.image.src = color;
 				}
-				var myGameArea = {
-					canvas: document.createElement("canvas"),
-					start: function () {
-						this.canvas.width = canvasWidth;
-						this.canvas.height = 600;
-						this.canvas.id = "canvas";
-						this.context = this.canvas.getContext("2d");
-						document.getElementById("container").insertBefore(this.canvas, document.getElementById("container").childNodes[0]);
-						this.frameNo = 0;
-						this.interval = setInterval(updateGameArea, 20);
-					},
-					clear: function () {
-						this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-					},
-					stop: function () {
-						clearInterval(this.interval);
-					}
+				this.width = width;
+				this.height = height;
+				this.speedX = 0;
+				this.x = x;
+				this.y = y;
+				this.angle = 0;
+				this.update = function () {
+					ctx = myGameArea.context;
+					ctx.fillStyle = color;
+					ctx.fillRect(this.x, this.y, this.width, this.height);
 				}
-		
-				function component(width, height, color, x, y, type) {
-					this.type = type;
+				this.rotate = function () {
+					ctx = myGameArea.context;
+
 					if (type == "image") {
-						this.image = new Image();
-						this.image.src = color;
-					}
-					this.width = width;
-					this.height = height;
-					this.speedX = 0;
-					this.x = x;
-					this.y = y;
-					this.angle = 0;
-					this.update = function () {
-						ctx = myGameArea.context;
+						ctx.save();
+						ctx.translate(this.x, this.y);
+						ctx.rotate(this.angle);
+						ctx.fillStyle = color;
+						ctx.drawImage(this.image, this.width / -2, this.height / -2, this.width, this.height);
+						ctx.restore();
+					} else {
 						ctx.fillStyle = color;
 						ctx.fillRect(this.x, this.y, this.width, this.height);
 					}
-					this.rotate = function () {
-						ctx = myGameArea.context;
-		
-						if (type == "image") {
-							ctx.save();
-							ctx.translate(this.x, this.y);
-							ctx.rotate(this.angle);
-							ctx.fillStyle = color;
-							ctx.drawImage(this.image, this.width / -2, this.height / -2, this.width, this.height);
-							ctx.restore();
-						} else {
-							ctx.fillStyle = color;
-							ctx.fillRect(this.x, this.y, this.width, this.height);
-						}
-					}
-		
-					this.newPos = function () {
-						this.x += this.speedX;
-					}
-					this.crashWith = function (otherobj) {
-						var myleft = this.x;
-						var myright = this.x + (this.width);
-						var mytop = this.y;
-						var mybottom = this.y + (this.height);
-						var otherleft = otherobj.x;
-						var otherright = otherobj.x + (otherobj.width);
-						var othertop = otherobj.y;
-						var otherbottom = otherobj.y + (otherobj.height);
-						var crash = true;
-						if ((mybottom < othertop) || (mytop > otherbottom) || (myright < otherleft) || (myleft > otherright)) {
-							crash = false;
-						}
-						return crash;
-					}
 				}
-		
-				function updateGameArea() {
-					if ((Agent1.crashWith(Finish2)) || (Agent1.crashWith(Finish4)) || (Agent1.crashWith(Finish6)) || (Agent1.crashWith(Finish8)) || (Agent1.crashWith(Finish10)) || (Agent1.crashWith(Finish12))) {
-						myGameArea.stop();
-					} else if ((Agent2.crashWith(Finish2)) || (Agent2.crashWith(Finish4)) || (Agent2.crashWith(Finish6)) || (Agent2.crashWith(Finish8)) || (Agent2.crashWith(Finish10)) || (Agent2.crashWith(Finish12))) {
-						myGameArea.stop();
-					} else if ((Agent3.crashWith(Finish2)) || (Agent3.crashWith(Finish4)) || (Agent3.crashWith(Finish6)) || (Agent3.crashWith(Finish8)) || (Agent3.crashWith(Finish10)) || (Agent3.crashWith(Finish12))) {
-						myGameArea.stop();
-					} else if ((Agent4.crashWith(Finish2)) || (Agent4.crashWith(Finish4)) || (Agent4.crashWith(Finish6)) || (Agent4.crashWith(Finish8)) || (Agent4.crashWith(Finish10)) || (Agent4.crashWith(Finish12))) {
-						myGameArea.stop();
-						endRace();
-					} else {
-						myGameArea.clear();
-		
-						StartLine.update();
-						Finish1.update();
-						Finish2.update();
-						Finish3.update();
-						Finish4.update();
-						Finish5.update();
-						Finish6.update();
-						Finish7.update();
-						Finish8.update();
-						Finish9.update();
-						Finish10.update();
-						Finish11.update();
-						Finish12.update();
-		
-						Agent1.newPos();
-						Agent1.rotate();
+
+				this.newPos = function () {
+					this.x += this.speedX;
+				}
+				this.crashWith = function (otherobj) {
+					var myleft = this.x;
+					var myright = this.x + (this.width);
+					var mytop = this.y;
+					var mybottom = this.y + (this.height);
+					var otherleft = otherobj.x;
+					var otherright = otherobj.x + (otherobj.width);
+					var othertop = otherobj.y;
+					var otherbottom = otherobj.y + (otherobj.height);
+					var crash = true;
+					if ((mybottom < othertop) || (mytop > otherbottom) || (myright < otherleft) || (myleft > otherright)) {
+						crash = false;
+					}
+					return crash;
+				}
+			}
+
+			function updateGameArea() {
+			
+				if ((Agent1.crashWith(Finish2)) || (Agent1.crashWith(Finish4)) || (Agent1.crashWith(Finish6)) || (Agent1
+						.crashWith(Finish8)) || (Agent1.crashWith(Finish10)) || (Agent1.crashWith(Finish12))) {
+					myGameArea.stop();
+					endRace(0);
+				} else if ((Agent2.crashWith(Finish2)) || (Agent2.crashWith(Finish4)) || (Agent2.crashWith(Finish6)) || (Agent2
+						.crashWith(Finish8)) || (Agent2.crashWith(Finish10)) || (Agent2.crashWith(Finish12))) {
+					myGameArea.stop();
+					endRace(1);
+				} else if ((Agent3.crashWith(Finish2)) || (Agent3.crashWith(Finish4)) || (Agent3.crashWith(Finish6)) || (Agent3
+						.crashWith(Finish8)) || (Agent3.crashWith(Finish10)) || (Agent3.crashWith(Finish12))) {
+					myGameArea.stop();
+					endRace(2);
+				} else if ((Agent4.crashWith(Finish2)) || (Agent4.crashWith(Finish4)) || (Agent4.crashWith(Finish6)) || (Agent4
+						.crashWith(Finish8)) || (Agent4.crashWith(Finish10)) || (Agent4.crashWith(Finish12))) {
+					myGameArea.stop();
+					endRace(3);
+				} else {
+					myGameArea.clear();
+
+					StartLine.update();
+					Finish1.update();
+					Finish2.update();
+					Finish3.update();
+					Finish4.update();
+					Finish5.update();
+					Finish6.update();
+					Finish7.update();
+					Finish8.update();
+					Finish9.update();
+					Finish10.update();
+					Finish11.update();
+					Finish12.update();
+
+					Agent1.newPos();
+					Agent1.rotate();
+
+					Agent2.newPos();
+					Agent2.rotate();
+
+					Agent3.newPos();
+					Agent3.rotate();
+
+					Agent4.newPos();
+					Agent4.rotate();
+					
+					if (rotateFlag === true) {
 						Agent1.angle += 1 * Math.PI / 150;
-		
-						Agent2.newPos();
-						Agent2.rotate();
 						Agent2.angle += 1 * Math.PI / 140;
-		
-						Agent3.newPos();
-						Agent3.rotate();
 						Agent3.angle += 1 * Math.PI / 130;
-		
-						Agent4.newPos();
-						Agent4.rotate();
 						Agent4.angle += 1 * Math.PI / 120;
+
 					}
 				}
-		
-				function startRace() {
-					var tempcanvas = document.createElement("canvas");
-					tempcanvas.setAttribute("id", "tempCanvas");
-					document.getElementById("container").insertBefore(tempcanvas, document.getElementById("container").childNodes[1]);
-		
-					var blinker = new Blinker(tempcanvas);
+			}
+
+			function startRace() {
+				var tempcanvas = document.createElement("canvas");
+				tempcanvas.setAttribute("id", "tempCanvas");
+				document.getElementById("container").insertBefore(tempcanvas, document.getElementById("container").childNodes[
+					1]);
+
+				var blinker = new Blinker(tempcanvas);
+			}
+
+			function Blinker(canvas) {
+				this.canvas = canvas;
+				var self = this;
+				this.ready = setTimeout(function () {
+					self.doReady();
+				}, 500);
+				this.getSet = setTimeout(function () {
+					self.doGetSet();
+				}, 2000);
+				this.go = setTimeout(function () {
+					self.doGo();
+				}, 3500);
+				this.clear = setTimeout(function () {
+					self.doClear();
+				}, 5000);
+				this.doReady = function () {
+					var context = this.canvas.getContext("2d");
+					context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+					context.font = "80px Arial";
+					context.fillStyle = "red";
+					context.textAlign = "center";
+					context.left = "10%";
+					context.fillText("READY!", this.canvas.width / 2, this.canvas.height / 2);
+				};
+				this.doGetSet = function () {
+					var context = this.canvas.getContext("2d");
+					context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+					context.font = "65px Arial";
+					context.fillStyle = "orange";
+					context.textAlign = "center";
+					context.fillText("GET SET!", this.canvas.width / 2, this.canvas.height / 2);
+				};
+				this.doGo = function () {
+					var context = this.canvas.getContext("2d");
+					context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+					context.font = "105px Arial";
+					context.fillStyle = "green";
+					context.textAlign = "center";
+					context.fillText("GO!!!", this.canvas.width / 2, this.canvas.height / 2);
+				};
+				this.doClear = function () {
+					var element = document.getElementById("tempCanvas");
+					element.remove();
+					calculateSpeed();
+				};
+			}
+
+			function moveAgents(totalSpeed) {
+
+				rotateFlag = true;
+				Agent1.speedX = totalSpeed[0];
+				Agent2.speedX = totalSpeed[1];
+				Agent3.speedX = totalSpeed[2];
+				Agent4.speedX = totalSpeed[3];
+
+
+			}
+
+			function endRace(value) {
+				var tempcanvas1 = document.createElement("canvas");
+				tempcanvas1.setAttribute("id", "tempCanvas1");
+				document.getElementById("container").insertBefore(tempcanvas1, document.getElementById("container").childNodes[
+					1]);
+				
+				var tempcanvas2 = document.createElement("canvas");
+				tempcanvas2.setAttribute("id", "tempCanvas2");
+				document.getElementById("container").insertBefore(tempcanvas2, document.getElementById("container").childNodes[
+					1]);
+
+				var start = document.getElementById("start").style.visibility = "hidden";
+				var restart = document.getElementById("restart").style.visibility = "visible";
+				if (value === 0){
+					image = images[0].image
 				}
-		
-				function Blinker(canvas) {
-					this.canvas = canvas;
-					var self = this;
-					this.ready = setTimeout(function () { self.doReady(); }, 500);
-					this.getSet = setTimeout(function () { self.doGetSet(); }, 2000);
-					this.go = setTimeout(function () { self.doGo(); }, 3500);
-					this.clear = setTimeout(function () { self.doClear(); }, 5000);
-					this.doReady = function () {
-						var context = this.canvas.getContext("2d");
-						context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-						context.font = "80px Arial";
-						context.fillStyle = "red";
-						context.textAlign = "center";
-						context.left = "10%";
-						context.fillText("READY!", this.canvas.width / 2, this.canvas.height / 2);
-					};
-					this.doGetSet = function () {
-						var context = this.canvas.getContext("2d");
-						context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-						context.font = "65px Arial";
-						context.fillStyle = "orange";
-						context.textAlign = "center";
-						context.fillText("GET SET!", this.canvas.width / 2, this.canvas.height / 2);
-					};
-					this.doGo = function () {
-						var context = this.canvas.getContext("2d");
-						context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-						context.font = "105px Arial";
-						context.fillStyle = "green";
-						context.textAlign = "center";
-						context.fillText("GO!!!", this.canvas.width / 2, this.canvas.height / 2);
-					};
-					this.doClear = function () {
-						var element = document.getElementById("tempCanvas");
-						element.remove();
-						moveAgents();
-					};
+				else if (value ===1) {
+					image = images[1].image
 				}
-		
-				function moveAgents() {
-					Agent1.speedX = 1;
-					Agent2.speedX = 1.25;
-					Agent3.speedX = 1.5;
-					Agent4.speedX = 1.75;
+				else if (value ===2) {
+					image = images[2].image
 				}
-		
-				function endRace() {
-					var tempcanvas1 = document.createElement("canvas");
-					tempcanvas1.setAttribute("id", "tempCanvas1");
-					document.getElementById("container").insertBefore(tempcanvas1, document.getElementById("container").childNodes[1]);
-		
-					var start = document.getElementById("start").style.visibility = "hidden";
-					var restart = document.getElementById("restart").style.visibility = "visible";
-					var blinker1 = new Blinker1(tempcanvas1);
+				else if (value ===3) {
+					image = images[3].image
 				}
-		
-				function Blinker1(canvas) {
-					this.canvas = canvas;
-					this.canvas.height = 50;
-					var self = this;
-					this.ready = setTimeout(function () { self.doCongratulate(); }, 500);
-					this.doCongratulate = function () {
-						var context = this.canvas.getContext("2d");
-						context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-						context.fillStyle = "black";
-						context.fillRect(0, 0, this.canvas.width, this.canvas.height);
-						context.font = "30px Arial";
-						context.fillStyle = "yellow";
-						context.textAlign = "center";
-						context.fillText("Congratulations!", this.canvas.width / 2, this.canvas.height / 2);
-					};
-				}
-			</script>
-		</div>
-		<div id="buttonContainer">			
-			<button id="start" onclick="startRace()" style="visibility: visible">START RACE</button>
-			<button id="restart" onclick="window.location.reload()" style="visibility: hidden">REPLAY</button>
-		</div>
-	</body>
+				
+				var blinker1 = new Blinker1(tempcanvas1,tempcanvas2,image);
+				
+			}
+
+			function Blinker1(canvas1, canvas2, agentImage) {
+				this.canvas1 = canvas1;
+				this.canvas1.height = 100;
+				var self = this;
+				this.ready = setTimeout(function () {
+					self.doCongratulate();
+				}, 500);
+				this.doCongratulate = function () {
+					var context1 = this.canvas1.getContext("2d");
+					context1.clearRect(0, 0, this.canvas1.width, this.canvas1.height);
+					context1.fillStyle = "white";
+					context1.fillRect(0, 0, this.canvas1.width, this.canvas1.height);
+					context1.font = "30px Arial";
+					context1.fillStyle = "gray";
+					context1.textAlign = "center";
+					context1.fillText("Congratulations!", this.canvas1.width / 2, this.canvas1.height / 2);
+
+					this.canvas2 = canvas2;
+					this.canvas2.height = 400;
+					var context2 = this.canvas2.getContext("2d");
+					var image = new Image();
+
+					image.onload = () =>
+					{
+						context2.drawImage(image, 0, 0,300,300);
+					}
+					image.src = agentImage;
+				};
+			}
+		</script>
+	</div>
+	<div id="buttonContainer">
+		<button id="start" onclick="startRace()" style="visibility: visible">START RACE</button>
+		<button id="restart" onclick="window.location.reload()" style="visibility: hidden">REPLAY</button>
+	</div>
+</body>
+
 </html>
