@@ -8,6 +8,7 @@
 		canvas {
 			background-color: Gainsboro;
 			position: absolute;
+			box-align: center;
 		}
 
 		#canvas {
@@ -21,23 +22,136 @@
 			left: 35%;
 		}
 
+		#tempCanvas1 {
+			z-index: 1;
+			margin: auto;
+			top: 25%;
+			left: 10%;
+			box-align: center;
+		}
+
 		div {
 			position: relative;
+			text-align: center;
+		}
+
+		#divLoader {
+			display: none;
+			text-align: center;
+		}
+
+		#loader {
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			z-index: 1;
+			width: 150px;
+			height: 150px;
+			margin: -75px 0 0 -75px;
+			border: 16px solid #f3f3f3;
+			border-radius: 50%;
+			border-top: 16px solid #3498db;
+			width: 120px;
+			height: 120px;
+			-webkit-animation: spin 2s linear infinite;
+			animation: spin 2s linear infinite;
+		}
+
+		h2 {
+			position: absolute;
+			left: 47.5%;
+			top: 30%;
+			width: 150px;
+			height: 150px;
+
+		}
+
+		@-webkit-keyframes spin {
+			0% {
+				-webkit-transform: rotate(0deg);
+			}
+
+			100% {
+				-webkit-transform: rotate(360deg);
+			}
+		}
+
+		@keyframes spin {
+			0% {
+				transform: rotate(0deg);
+			}
+
+			100% {
+				transform: rotate(360deg);
+			}
+		}
+
+		/* Add animation to "page content" */
+		.animate-bottom {
+			position: relative;
+			-webkit-animation-name: animatebottom;
+			-webkit-animation-duration: 1s;
+			animation-name: animatebottom;
+			animation-duration: 1s
+		}
+
+		@-webkit-keyframes animatebottom {
+			from {
+				bottom: -100px;
+				opacity: 0
+			}
+
+			to {
+				bottom: 0px;
+				opacity: 1
+			}
+		}
+
+		@keyframes animatebottom {
+			from {
+				bottom: -100px;
+				opacity: 0
+			}
+
+			to {
+				bottom: 0;
+				opacity: 1
+			}
 		}
 	</style>
+	<script src="https://sdk-cdn.mypurecloud.com/javascript/52.1.1/purecloud-platform-client-v2.min.js"></script>
+	<script src="./scripts/main.js"></script>
 </head>
 
-<body onload="startGame()">
+<body>
+	<h2 id="h2">Loading...</h2>
+	<div id="loader">
+
+	</div>
+
 	<script>
 		var Agent1, Agent2, Agent3, Agent4;
 		var StartLine, Finish1, Finish2, Finish3, Finish4, Finish5, Finish6, Finish7, Finish8, Finish9, Finish10, Finish11,
 			Finish12;
 
-		function startGame() {
-			Agent1 = new component(100, 100, "images\\lady1.png", 10, 30, "image");
-			Agent2 = new component(100, 100, "images\\man1.png", 10, 180, "image");
-			Agent3 = new component(100, 100, "images\\lady2.png", 10, 330, "image");
-			Agent4 = new component(100, 100, "images\\man2.png", 10, 480, "image");
+		function showPage() {
+			document.getElementById("loader").style.display = "none";
+			document.getElementById("h2").style.display = "none";
+			document.getElementById("div").style.display = "block";
+		}
+
+		function getImage() {
+			images = Object.values(players);
+			startGame(images);
+			showPage();
+
+		}
+
+		function startGame(images) {
+			Agent1 = new component(100, 100, images[0].image, 10, 30, "image");
+			Agent2 = new component(100, 100, images[1].image, 10, 180, "image");
+			Agent3 = new component(100, 100, images[2].image, 10, 330, "image");
+			Agent4 = new component(100, 100, images[3].image, 10, 480, "image");
 
 			StartLine = new component(10, 600, "DimGray", 115, 0, "color");
 			Finish1 = new component(25, 100, "Black", 950, 0, "color");
@@ -52,6 +166,7 @@
 			Finish10 = new component(25, 100, "White", 975, 400, "color");
 			Finish11 = new component(25, 100, "White", 950, 500, "color");
 			Finish12 = new component(25, 100, "Black", 975, 500, "color");
+
 
 			myGameArea.start();
 		}
@@ -90,6 +205,18 @@
 				ctx = myGameArea.context;
 
 				if (type == "image") {
+					// ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+
+
+				} else {
+					ctx.fillStyle = color;
+					ctx.fillRect(this.x, this.y, this.width, this.height);
+				}
+			}
+			this.rotate = function () {
+				ctx = myGameArea.context;
+
+				if (type == "image") {
 					ctx.save();
 					ctx.translate(this.x, this.y);
 					ctx.rotate(this.angle);
@@ -101,6 +228,7 @@
 					ctx.fillRect(this.x, this.y, this.width, this.height);
 				}
 			}
+
 			this.newPos = function () {
 				this.x += this.speedX;
 			}
@@ -134,7 +262,8 @@
 			} else if ((Agent4.crashWith(Finish2)) || (Agent4.crashWith(Finish4)) || (Agent4.crashWith(Finish6)) || (Agent4
 					.crashWith(Finish8)) || (Agent4.crashWith(Finish10)) || (Agent4.crashWith(Finish12))) {
 				myGameArea.stop();
-				myGameArea.start();
+				myGameArea.clear();
+				endRace();
 			} else {
 				myGameArea.clear();
 
@@ -154,22 +283,22 @@
 
 
 				Agent1.newPos();
-				Agent1.update();
+				Agent1.rotate();
 				Agent1.angle += 1 * Math.PI / 150;
 
 
 				Agent2.newPos();
-				Agent2.update();
+				Agent2.rotate();
 				Agent2.angle += 1 * Math.PI / 140;
 
 
 				Agent3.newPos();
-				Agent3.update();
+				Agent3.rotate();
 				Agent3.angle += 1 * Math.PI / 130;
 
 
 				Agent4.newPos();
-				Agent4.update();
+				Agent4.rotate();
 				Agent4.angle += 1 * Math.PI / 120;
 			}
 		}
@@ -203,6 +332,7 @@
 				context.font = "80px Arial";
 				context.fillStyle = "red";
 				context.textAlign = "center";
+				context.left = "10%";
 				context.fillText("READY!", this.canvas.width / 2, this.canvas.height / 2);
 			};
 			this.doGetSet = function () {
@@ -234,9 +364,34 @@
 			Agent3.speedX = 1.5;
 			Agent4.speedX = 1.75;
 		}
+
+		function endRace() {
+			var tempcanvas1 = document.createElement("canvas");
+			tempcanvas1.setAttribute("id", "tempCanvas1");
+			document.body.insertBefore(tempcanvas1, document.body.childNodes[1]);
+
+			var blinker1 = new Blinker1(tempcanvas1);
+		}
+
+		function Blinker1(canvas) {
+			this.canvas = canvas;
+			this.canvas.width = 500;
+			this.canvas.height = 100;
+			var self = this;
+			this.ready = setTimeout(function () {
+				self.doCongratulate();
+			}, 500);
+			this.doCongratulate = function () {
+				var context = this.canvas.getContext("2d");
+				context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+				context.font = "30px Arial";
+				context.fillStyle = "yellow";
+				context.fillText("Congratulations!", this.canvas.width / 2, this.canvas.height / 2);
+			};
+		}
 	</script>
 
-	<div>
+	<div id="start">
 		<button onclick="startRace()">START RACE</button>
 	</div>
 </body>
