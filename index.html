@@ -61,6 +61,8 @@
 				}
 
 				function startGame(images) {
+					canvasWidth = window.innerWidth;
+
 					Agent1 = new component(100, 100, images[0].image, 10, 30, "image");
 					Agent2 = new component(100, 100, images[1].image, 10, 180, "image");
 					Agent3 = new component(100, 100, images[2].image, 10, 330, "image");
