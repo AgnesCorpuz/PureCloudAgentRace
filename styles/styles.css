@@ -23,6 +23,14 @@ canvas {
     box-align: center;
 }
 
+#tempCanvas2 {
+    z-index: 1;
+    margin: auto;
+    top: 15%;
+    left: 40%;
+    box-align: center;
+}
+
 #buttonContainer {
     position: relative;
     text-align: center;
