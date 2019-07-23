@@ -85,6 +85,7 @@
 				var myGameArea = {
 					canvas: document.createElement("canvas"),
 					start: function () {
+						canvasWidth = window.innerWidth;
 						this.canvas.width = canvasWidth;
 						this.canvas.height = 600;
 						this.canvas.id = "canvas";
