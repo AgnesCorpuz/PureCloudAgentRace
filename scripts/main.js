@@ -3,7 +3,15 @@ const platformClient = require('platformClient');
 const client = platformClient.ApiClient.instance;
 
 const clientId = 'e7de8a75-62bb-43eb-9063-38509f8c21af';
-const redirectUri = 'http://localhost:8080/index.html';
+
+var redirectUri;
+var location = window.location.href;
+
+if (location.hostname === 'localhost') {
+    redirectUri = 'http://localhost:8080/index.html';
+} else {
+    redirectUri = 'https://agnescorpuz.github.io/PureCloudAgentRace/';
+}
 
 const usersApi = new platformClient.UsersApi();
 const analyticsApi = new platformClient.AnalyticsApi();
