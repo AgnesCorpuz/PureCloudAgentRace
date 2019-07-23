@@ -6,6 +6,16 @@
 		<link rel="stylesheet" href="./styles/styles.css">
 		<script src="https://sdk-cdn.mypurecloud.com/javascript/52.1.1/purecloud-platform-client-v2.min.js"></script>
 		<script src="./scripts/main.js"></script>
+		<script>
+			// Resize the play area on window resize
+			window.addEventListener('resize', function(){
+				let canvas = document.getElementById('canvas');
+				if(canvas){
+					canvas.width = window.innerWidth;
+					canvasWidth = window.innerWidth;
+				}
+			});
+		</script>
 	</head>
 	<body id="body">
 		<div id="loaderContainer">
